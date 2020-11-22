@@ -1,0 +1,25 @@
+
+<h2 mat-dialog-title>New Project Details</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="fg">
+        
+        <mat-form-field appearance="standard">
+            <mat-label>Project Name</mat-label>
+            <input matInput placeholder="Enter project name" formControlName="projectName">
+        </mat-form-field>
+
+        <mat-checkbox *ngFor="let t of templates"
+                    
+                    [value]="t" (change)="onCheckChange($event)"
+                    >{{t.appName}}</mat-checkbox>
+        
+    </form>
+    
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button color="primary" (click)="okClicked()">Ok</button>
+    <button mat-button (click)="cancelClicked()" >Cancel</button>
+</mat-dialog-actions>
+

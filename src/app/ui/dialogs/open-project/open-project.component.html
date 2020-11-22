@@ -1,0 +1,24 @@
+
+<h2 mat-dialog-title>Select Project</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="fg"> 
+        
+        <mat-form-field appearance="fill">
+            <mat-label>Project</mat-label>
+            <mat-select formControlName="selectedProject">
+              <mat-option *ngFor="let p of projects" [value]="p">
+                {{p.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        
+    </form>
+    
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button color="primary" (click)="okClicked()">Ok</button>
+    <button mat-button (click)="cancelClicked()" >Cancel</button>
+</mat-dialog-actions>
+

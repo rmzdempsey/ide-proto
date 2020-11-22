@@ -1,0 +1,7 @@
+{
+    "appName":"RMD Dummy Service",
+    "appType":"springboot",
+    "remoteUrl":"https://rmd-dev/dummy.com",
+    "port":8850,
+    "debugPort":8851
+}

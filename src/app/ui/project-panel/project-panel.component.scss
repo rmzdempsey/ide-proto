@@ -1,0 +1,54 @@
+
+
+.project-header{
+    border-bottom: 1px gray solid;
+    background-color: white;
+    margin-bottom:10px;
+}
+
+.component-header{
+    border-bottom: 1px red solid;
+}
+
+.component-card{
+    margin-left: 10px;
+    margin-right:10px;
+}
+
+.component-title {
+    font-weight: bold;
+    font-size: larger;
+}
+
+.port {
+    white-space: nowrap;
+}
+
+.server {
+    white-space: nowrap;
+}
+
+.portLabel {
+    white-space: nowrap;
+    font-size: x-small;
+    padding-bottom: 5px;
+}
+
+.ckbxLabel {
+    font-size: small;
+    padding-top:10px;
+}
+
+.ckbxDiv {
+    padding-top: 10px;
+}
+
+.console {
+    background-color: dimgray;
+    color: lightgray;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: normal;
+    width: 100%;
+    resize: vertical;
+}
+

@@ -1,0 +1,73 @@
+
+<div fxLayout="column" *ngIf="isLoggedIn" >
+
+    <div fxLayout="row" fxLayoutAlign="start center" class="project-header">
+        <app-main-menu></app-main-menu>
+        <div >Project <span *ngIf="selectedProject">{{selectedProject.name}}</span></div>
+    </div>
+
+    
+    
+    <ng-container *ngIf="selectedProject">
+        <div fxLayout="column" fxLayoutGap="10px" class="main-content" cdkDropList (cdkDropListDropped)="drop($event)">
+
+            <mat-card *ngFor="let t of cards; let i = index " class="component-card" >
+
+                <mat-card-content>
+                    <div fxLayout="column">
+                        <div fxLayout="row" fxLayoutAlign="space-between">
+                            <div class="component-title" cdkDrag>{{t.template.appName}}</div>
+                            <div>Branch</div>
+                        </div>
+                        <ng-container *ngIf="t.template.appType=='springboot'">
+                            <div fxLayout="row" fxLayoutAlign="space-between">
+                                <div fxLayout="row">
+                                    <div>A</div>
+                                    <div>B</div>
+                                    <div>C</div>
+                                    <div>D</div>
+                                </div>
+                                
+                                <form [formGroup]="t.fg">
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+                                        
+                                        <div fxLayout="column">
+                                            <div class="portLabel">Server</div>
+                                            <div class="server">{{t.fg.get('runLocal').value ? 'localhost' : t.fg.get('server').value}}</div>
+                                        </div>
+                                        <div fxLayout="column" *ngIf="t.fg.get('runLocal').value">
+                                            <div class="portLabel">Port</div>
+                                            <div class="port">{{t.fg.get('port').value}}</div>
+                                        </div>
+                                        <div fxLayout="column" *ngIf="t.fg.get('runLocal').value">
+                                            <div class="portLabel">Debug Port</div>
+                                            <div class="port">{{t.fg.get('debugPort').value}}</div>
+                                        </div>
+                                        <div class="ckbxDiv" *ngIf="t.fg.get('runLocal').value">
+                                            <mat-checkbox [value]="t.fg.value" (change)="onDebugWaitChange($event,t.fg)"><span class="ckbxLabel">Wait on Debug</span></mat-checkbox>
+                                        </div>
+                                        <div class="ckbxDiv">
+                                            <mat-checkbox [value]="t.fg.value" (change)="onRunLocalChange($event,t.fg)"><span class="ckbxLabel">Run Locally</span></mat-checkbox>
+                                        </div>
+                                    </div>
+                                </form>
+                                    
+                            </div>
+                        </ng-container>
+                        <div>
+                            <textarea class="console" matAutosizeMaxRows="10" matAutosizeMinRows="1">hello world</textarea>
+                        </div>
+                        
+                        
+                    </div>
+    
+                </mat-card-content>
+                
+            </mat-card>
+            
+        
+        </div>
+    </ng-container>
+  </div>
+
+

@@ -1,0 +1,7 @@
+{
+    "appName":"Vulcan",
+    "appType":"springboot",
+    "remoteUrl":"https://vulcan-dev/dummy.com",
+    "port":8840,
+    "debugPort":8841
+}

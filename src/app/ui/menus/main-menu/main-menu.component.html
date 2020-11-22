@@ -1,0 +1,21 @@
+<button mat-icon-button [matMenuTriggerFor]="mainmenu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+<mat-menu #mainmenu="matMenu">
+    <button mat-menu-item (click)="newProject()">
+        <mat-icon>create_new_folder</mat-icon>
+        <span>New...</span>
+    </button>
+  <button mat-menu-item [disabled]="disableOpen" (click)="openProject()">
+    <mat-icon>folder_open</mat-icon>
+    <span>Open...</span>
+  </button>
+  <button mat-menu-item [disabled]="disableDelete" (click)="deleteProject()">
+    <mat-icon>delete</mat-icon>
+    <span>Delete</span>
+  </button>
+  <button mat-menu-item [disabled]="disableClose" (click)="closeProject()">
+    <mat-icon>close</mat-icon>
+    <span>Close</span>
+  </button>
+</mat-menu>

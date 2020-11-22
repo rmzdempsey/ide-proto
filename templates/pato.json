@@ -1,0 +1,7 @@
+{
+    "appName" : "Pato",
+    "appType": "springboot",
+    "remoteUrl":"https://pato-dev/dummy.co.uk",
+    "port":8820,
+    "debugPort":8821
+}

@@ -1,0 +1,7 @@
+{
+    "appName":"Penman",
+    "appType":"springboot",
+    "remoteUrl":"https://penman-dev/dummy.com",
+    "port":8830,
+    "debugPort":8831
+}

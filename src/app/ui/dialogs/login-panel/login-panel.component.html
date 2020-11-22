@@ -1,0 +1,36 @@
+
+<h2 mat-dialog-title>Login Details</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="fg">
+        <div fxLayout="column">
+            <mat-form-field >
+                <mat-label>Domain</mat-label>
+                <mat-select formControlName="domain">
+                    <mat-option *ngFor="let d of domains" [value]="d">
+                        {{d}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            
+            <mat-form-field >
+                <mat-label>Username</mat-label>
+                <input matInput placeholder="Enter your username" formControlName="username">
+            </mat-form-field>
+            
+            <mat-form-field >
+                <mat-label>Password</mat-label>
+                <input matInput type="password" placeholder="Enter your password" formControlName="password">
+            </mat-form-field>
+        </div>
+        
+    </form>
+
+    <div class="login-error">{{loginError}}</div>
+    
+</mat-dialog-content>
+
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="end">
+    <button mat-button color="primary" (click)="loginClicked()" [disabled]="disableLogin()">Login</button>
+</mat-dialog-actions>
+
