@@ -48,19 +48,18 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   }
 
   newProject(){
-    const dialogRef = this.dialog.open(NewProjectComponent, {
-      width: '250px',
-      disableClose:true,
-      data: {}
+    this.dialog.open(NewProjectComponent, {
+      width: '400px',
+      disableClose:true
     });
   }
 
   openProject(){
-    const dialogRef = this.dialog.open(OpenProjectComponent, {
+    this.dialog.open(OpenProjectComponent, {
       width: '250px',
-      disableClose:true,
-      data: {}
+      disableClose:true
     });
+    
   }
 
   closeProject(){

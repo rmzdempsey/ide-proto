@@ -62,8 +62,9 @@ electron_1.ipcMain.on("createProject", function (event, projectName, templates) 
         var data = new Uint8Array(Buffer.from(JSON.stringify(project)));
         fs.writeFile(homedir + '/dtp-ide/' + projectName + '/project.json', data, function (err) {
             if (err)
-                throw err;
-            getProjects();
+                win.webContents.send("createProjectErrorResponse", err.message);
+            else
+                win.webContents.send("createProjectResponse", project);
         });
     });
 });

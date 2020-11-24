@@ -1,4 +1,4 @@
-import { Injectable, ChangeDetectorRef } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import {Template} from '../model/template';
 import {Project} from '../model/project';
@@ -19,6 +19,7 @@ export class ConfigService {
 
   constructor(
     private store: Store<fromRoot.State>,
+    
   ) { 
 
     electron.ipcRenderer.on('getTemplatesResponse', (event, templates) => {
@@ -27,6 +28,16 @@ export class ConfigService {
 
     electron.ipcRenderer.on('getProjectsResponse', (event, projects) => {
       this.projectsSubject.next(projects);
+    });
+
+    electron.ipcRenderer.on('createProjectResponse', (event, project) => {
+      this.store.dispatch(new ProjectActions.NewProjectSuccessAction(project));
+      
+    });
+
+    electron.ipcRenderer.on('createProjectErrorResponse', (event, reason) => {
+      this.store.dispatch(new ProjectActions.NewProjectFailedAction(reason));
+      
     });
 
     this.templatesSubject.subscribe((value) => {
@@ -38,6 +49,7 @@ export class ConfigService {
       let projects : Array<Project> = value;
       this.store.dispatch(new ProjectActions.LoadProjectsAction(projects));
     });
+
   }
 
   getTemplates() : Observable<Template[]>{
@@ -57,6 +69,7 @@ export class ConfigService {
   getProjectsFromElectron(){
     electron.ipcRenderer.send('getProjects');
   }
+
 
   newProject(projectName:string, templates:any){
     electron.ipcRenderer.send('createProject', projectName, templates );

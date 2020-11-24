@@ -80,8 +80,8 @@ ipcMain.on("createProject", (event, projectName, templates) => {
     if (err) throw err;
     const data = new Uint8Array(Buffer.from(JSON.stringify(project)));
     fs.writeFile(homedir + '/dtp-ide/' + projectName + '/project.json', data, (err) => {
-      if (err) throw err;
-      getProjects();
+      if (err) win.webContents.send("createProjectErrorResponse", err.message );
+      else win.webContents.send("createProjectResponse", project );
     });
   });
 
