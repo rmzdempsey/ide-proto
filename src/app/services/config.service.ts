@@ -65,13 +65,11 @@ export class ConfigService {
     });
 
     this.templatesSubject.subscribe((value) => {
-      let templates : Array<Template> = value;
-      this.store.dispatch(new TemplateActions.LoadTemplatesAction(templates));
+      this.store.dispatch(new TemplateActions.LoadTemplatesAction(value));
     });
 
     this.projectsSubject.subscribe((value) => {
-      let projects : Array<Project> = value;
-      this.store.dispatch(new ProjectActions.LoadProjectsAction(projects));
+      this.store.dispatch(new ProjectActions.LoadProjectsAction(value));
     });
 
   }
