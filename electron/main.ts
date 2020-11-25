@@ -112,11 +112,13 @@ function cloneApp(projDir, app){
   const ls = spawn("git", ["clone", "--progress", "--verbose", app.template.repo, projDir + "/" + app.template.appName]);
 
   ls.stdout.on("data", data => {
-    win.webContents.send("updateConsoleStdOut", app.template.appName, data );
+    const line : string = String.fromCharCode.apply(null, data)
+    win.webContents.send("updateConsoleStdOut", app.template.appName, line );
   });
 
   ls.stderr.on("data", data => {
-    win.webContents.send("updateConsoleStdErr", app.template.appName, data );
+    const line : string = String.fromCharCode.apply(null, data)
+    win.webContents.send("updateConsoleStdErr", app.template.appName, line );
   });
 
   ls.on('error', (error) => {

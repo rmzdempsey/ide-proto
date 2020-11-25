@@ -52,14 +52,12 @@ export class ConfigService {
     });
 
     electron.ipcRenderer.on('updateConsoleStdOut', (event, name, data) => {
-      const line : string = String.fromCharCode.apply(null, data)
-      this.store.dispatch(new ConsoleUpdateAction({name:name,line:line}));
+      this.store.dispatch(new ConsoleUpdateAction({name:name,line:data}));
       
     });
 
     electron.ipcRenderer.on('updateConsoleStdErr', (event, name, data) => {
-      let line : string = String.fromCharCode.apply(null, data)
-      this.store.dispatch(new ConsoleUpdateAction({name:name,line:line}));
+      this.store.dispatch(new ConsoleUpdateAction({name:name,line:data}));
     });
 
     electron.ipcRenderer.on('appBranchInfo', (event, appName, branches, currentBranch)=>{
