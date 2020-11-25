@@ -3,5 +3,6 @@
     "appType":"repo",
     "remoteUrl":"",
     "port":-1,
-    "debugPort":-1
+    "debugPort":-1,
+    "repo":"https://github.com/rmzdempsey/hello-spring-api.git"
 }

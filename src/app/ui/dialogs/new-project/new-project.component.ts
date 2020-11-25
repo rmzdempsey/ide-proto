@@ -7,6 +7,7 @@ import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import { Template } from 'src/app/model/template';
 import {NewProjectAction,NEW_PROJECT_ACTION_SUCCESS,NEW_PROJECT_ACTION_FAILED} from '../../../store/actions/project-actions'
 import { Actions, ofType } from '@ngrx/effects';
+import { Application } from 'src/app/model/application';
 
 @Component({
   selector: 'app-new-project',
@@ -112,10 +113,11 @@ export class NewProjectComponent implements OnInit, OnDestroy {
   okClicked(){
     this.clearErrorMessage();
     if(this.fg.valid){
-      this.store.dispatch( new NewProjectAction({
-        name: this.fg.get('projectName').value,
-        templates : this.fg.get('selectedTemplates').value
-      }) )
+      let action : NewProjectAction = new NewProjectAction(
+        this.fg.get('projectName').value, 
+        this.fg.get('selectedTemplates').value
+      );
+      this.store.dispatch( action )
     }
   }
 

@@ -1,6 +1,6 @@
-import {Template} from './template';
+import {Application} from './application';
 
 export interface Project{
     name: string;
-    templates: Array<Template>;
+    apps: Array<Application>;
 }

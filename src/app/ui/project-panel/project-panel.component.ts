@@ -1,10 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../../store/reducers';
 import { Subscription } from 'rxjs';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {Template} from '../../model/template';
+import {CONSOLE_UPDATE_ACTION} from '../../store/actions/console-action';
+import {CloneAppsAction} from '../../store/actions/project-actions';
+import { Actions, ofType } from '@ngrx/effects';
 
 @Component({
   selector: 'app-project-panel',
@@ -18,16 +20,25 @@ export class ProjectPanelComponent implements OnInit, OnDestroy {
   loginSubscription : Subscription;
   selectedProjectSubscription : Subscription;
 
-  //fgs: Array<FormGroup>;
   cards: Array<any>;
 
-  //openState: Array<boolean> = [];
+  consoleSubscription: Subscription;
 
   constructor(
     private store: Store<fromRoot.State>,
+    private actions$: Actions,
+    private cdr : ChangeDetectorRef
     ) { }
 
   ngOnInit(): void {
+
+    this.consoleSubscription = this.actions$.pipe(
+      ofType(CONSOLE_UPDATE_ACTION),
+    ).subscribe(value=>{
+      this.appendToConsole(value['data']['name'],value['data']['line'])
+      this.cdr.detectChanges()
+    });
+
     this.loginSubscription = this.store.select(fromRoot.loggedIn).subscribe(value=>{
       if(value){
         this.isLoggedIn = true;
@@ -39,13 +50,12 @@ export class ProjectPanelComponent implements OnInit, OnDestroy {
     this.selectedProjectSubscription = this.store.select(fromRoot.selectedProject).subscribe(
       value=>{
         this.selectedProject = value;
-        //this.openState = [];
-        //this.fgs = [];
+        
         if(this.selectedProject){
           this.cards = [];
-          this.selectedProject.templates.forEach(t => {
-            //this.openState.push(false);
-            this.cards.push({fg:new FormGroup({}),template:t});
+          this.selectedProject.apps.forEach(app => {
+            
+            this.cards.push({fg:new FormGroup({}),template:app.template});
           });
           this.cards.forEach(c => {
             
@@ -56,8 +66,9 @@ export class ProjectPanelComponent implements OnInit, OnDestroy {
               c.fg.addControl('debugPort',new FormControl({value:c.template.debugPort,disabled:true}));
               c.fg.addControl('debugWait',new FormControl(false));
             }
-            // this.fgs.push(fg)
+            
           });
+          this.store.dispatch(new CloneAppsAction(this.selectedProject))
         }
       }
       ); 
@@ -66,20 +77,10 @@ export class ProjectPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void{
-    if( this.loginSubscription )
-      this.loginSubscription.unsubscribe();
-    if(this.selectedProjectSubscription)
-      this.selectedProjectSubscription.unsubscribe();
+    this.loginSubscription?.unsubscribe();
+    this.selectedProjectSubscription?.unsubscribe();
+    this.consoleSubscription?.unsubscribe();
   }
-
-  // panelOpenStates(idx:number, b : boolean ){
-  //   if( idx < this.openState.length) this.openState[idx]=b;
-  // }
-
-  // panelOpenStatesValue(idx:number):boolean{
-  //   if( idx < this.openState.length) return this.openState[idx];
-  //   return false;
-  // }
 
   onRunLocalChange(evt,fg){
     fg.get('runLocal').value = evt.source.checked
@@ -91,6 +92,13 @@ export class ProjectPanelComponent implements OnInit, OnDestroy {
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.cards, event.previousIndex, event.currentIndex);
+  }
+
+  appendToConsole(appName: string, line : string ){
+    
+    let txt = document.getElementById(appName);
+    txt['value'] = txt['value'] + line
+    txt.scrollTop = txt.scrollHeight;
   }
 
 }

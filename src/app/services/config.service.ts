@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import * as fromRoot from '../store/reducers';
 import * as TemplateActions from '../store/actions/template-actions';
 import * as ProjectActions from '../store/actions/project-actions';
+import {ConsoleUpdateAction} from '../store/actions/console-action';
 
 const electron = (<any>window).require('electron');
 
@@ -38,6 +39,31 @@ export class ConfigService {
     electron.ipcRenderer.on('createProjectErrorResponse', (event, reason) => {
       this.store.dispatch(new ProjectActions.NewProjectFailedAction(reason));
       
+    });
+
+    electron.ipcRenderer.on('deleteProjectResponse', (event, projectName) => {
+      this.store.dispatch(new ProjectActions.DeleteProjectSuccessAction());
+      
+    });
+
+    electron.ipcRenderer.on('deleteProjectErrorResponse', (event, projectName, reason) => {
+      this.store.dispatch(new ProjectActions.DeleteProjectFailedAction(reason));
+      
+    });
+
+    electron.ipcRenderer.on('updateConsoleStdOut', (event, name, data) => {
+      const line : string = String.fromCharCode.apply(null, data)
+      this.store.dispatch(new ConsoleUpdateAction({name:name,line:line}));
+      
+    });
+
+    electron.ipcRenderer.on('updateConsoleStdErr', (event, name, data) => {
+      let line : string = String.fromCharCode.apply(null, data)
+      this.store.dispatch(new ConsoleUpdateAction({name:name,line:line}));
+    });
+
+    electron.ipcRenderer.on('appBranchInfo', (event, appName, branches, currentBranch)=>{
+      this.store.dispatch(new ProjectActions.LoadAppBranchesAction(appName,branches,currentBranch));
     });
 
     this.templatesSubject.subscribe((value) => {
@@ -77,5 +103,9 @@ export class ConfigService {
 
   deleteProject(projectName:string){
     electron.ipcRenderer.send('deleteProject', projectName );
+  }
+
+  cloneApps(project:Project){
+    electron.ipcRenderer.send('cloneApps', project );
   }
 }

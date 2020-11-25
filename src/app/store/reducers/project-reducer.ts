@@ -26,7 +26,7 @@ export function reducer(state: State = initialState, action: ProjectActions.Acti
             state.projects.forEach(p=>projects.push(p));
             projects.unshift(action.project)
             return Object.assign({},state,{selectedProjectIndex:0, projects: projects });
-        case ProjectActions.PROJECT_DELETED_ACTION:
+        case ProjectActions.DELETE_PROJECT_SUCCESS_ACTION:
             if( state.selectedProjectIndex >= 0 ){
                 let projects : Array<Project> = [];
                 state.projects.forEach(p=>projects.push(p));
@@ -37,6 +37,9 @@ export function reducer(state: State = initialState, action: ProjectActions.Acti
         case ProjectActions.PROJECT_SELECTED_ACTION:
             let idx = state.projects.indexOf(action.project);
             return Object.assign({},state,{selectedProjectIndex:idx });
+        case ProjectActions.LOAD_APP_BRANCHES_ACTION:
+            console.log("PROJ REDUCER BRANCHES", action.projectName, action.branches, action.currentBranch)
+            return Object.assign({},state);
         default: {
             return state;
         }

@@ -28,6 +28,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { LoginEffects } from './store/effects/login.effects';
 import { NewProjectEffects } from './store/effects/new-project-effects';
+import { DeleteProjectEffects } from './store/effects/delete-project-effects';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,7 @@ import { NewProjectEffects } from './store/effects/new-project-effects';
     MatCardModule,
     DragDropModule,
     StoreModule.forRoot(fromRoot.reducers),
-    EffectsModule.forRoot([LoginEffects,NewProjectEffects]),
+    EffectsModule.forRoot([LoginEffects,NewProjectEffects,DeleteProjectEffects]),
   ],
   providers: [],
   bootstrap: [AppComponent]

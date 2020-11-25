@@ -3,5 +3,6 @@
     "appType":"springboot",
     "remoteUrl":"https://rmd-dev/dummy.com",
     "port":8850,
-    "debugPort":8851
+    "debugPort":8851,
+    "repo":"https://github.com/rmzdempsey/hello-spring-api.git"
 }
