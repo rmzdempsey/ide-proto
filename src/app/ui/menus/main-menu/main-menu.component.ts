@@ -8,7 +8,8 @@ import { OpenProjectComponent } from '../../dialogs/open-project/open-project.co
 import { SelectProjectAction, DeleteProjectAction } from '../../../store/actions/project-actions';
 import { Project } from 'src/app/model/project';
 import { Actions, ofType } from '@ngrx/effects';
-import {NewProjectAction,DELETE_PROJECT_FAILURE_ACTION, DELETE_PROJECT_SUCCESS_ACTION} from '../../../store/actions/project-actions'
+import { DELETE_PROJECT_FAILURE_ACTION, DELETE_PROJECT_SUCCESS_ACTION} from '../../../store/actions/project-actions'
+import { DestroyConsoleAction } from 'src/app/store/actions/console-action';
 
 @Component({
   selector: 'app-main-menu',
@@ -22,7 +23,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   disableClose: boolean;
   disableOpen: boolean;
   disableDelete: boolean;
-  selectedProjectName: string;
+  selectedProject: Project;
 
   onSuccessSubscription: Subscription;
   onErrorSubscription: Subscription;
@@ -53,7 +54,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
       value=>{
         this.disableClose = (value == null || value == undefined)
         this.disableDelete = this.disableClose;
-        this.selectedProjectName = value ? value.name : null;
+        this.selectedProject = value;
       }
       ); 
     
@@ -86,11 +87,17 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   }
 
   closeProject(){
+    this.selectedProject.apps.forEach(a=>{
+      this.store.dispatch(new DestroyConsoleAction(a.template.appName))
+    })
     this.store.dispatch(new SelectProjectAction(null))
   }
 
   deleteProject(){
-    this.store.dispatch(new DeleteProjectAction(this.selectedProjectName))
+    this.selectedProject.apps.forEach(a=>{
+      this.store.dispatch(new DestroyConsoleAction(a.template.appName))
+    })
+    this.store.dispatch(new DeleteProjectAction(this.selectedProject.name))
   }
 
 }

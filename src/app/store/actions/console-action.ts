@@ -1,13 +1,37 @@
 
 import { Action } from '@ngrx/store';
 
-export const CONSOLE_UPDATE_ACTION = '[DtpIde] Console Update Action';
+export const CREATE_CONSOLE = '[DtpIde] Create Console Action';
+export const DESTROY_CONSOLE = '[DtpIde] Destroy Console Action';
+export const UPDATE_CONSOLE = '[DtpIde] Update Console Action';
+export const CLEAR_CONSOLE = '[DtpIde] Clear Console Action';
 
-export class ConsoleUpdateAction implements Action {
+export class CreateConsoleAction implements Action {
 
-    readonly type = CONSOLE_UPDATE_ACTION;
+    readonly type = CREATE_CONSOLE;
 
-    constructor( public data:any  ){}
+    constructor( public name: string){}
 }
 
-export type Actions = ConsoleUpdateAction;
+export class DestroyConsoleAction implements Action {
+
+    readonly type = DESTROY_CONSOLE;
+
+    constructor( public name: string){}
+}
+
+export class UpdateConsoleAction implements Action {
+
+    readonly type = UPDATE_CONSOLE;
+
+    constructor( public name: string, public data:string  ){}
+}
+
+export class ClearConsoleAction implements Action {
+
+    readonly type = CLEAR_CONSOLE;
+
+    constructor( public name: string){}
+}
+
+export type Actions = CreateConsoleAction | DestroyConsoleAction | UpdateConsoleAction | ClearConsoleAction;

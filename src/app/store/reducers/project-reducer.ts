@@ -38,12 +38,10 @@ export function reducer(state: State = initialState, action: ProjectActions.Acti
             let idx = state.projects.indexOf(action.project);
             return Object.assign({},state,{selectedProjectIndex:idx });
         case ProjectActions.LOAD_APP_BRANCHES_ACTION:
-            console.log("LOAD BRANCHES REDUCER");
             let projectsWithBranches : Array<Project> = [];
             state.projects.forEach(p=>projectsWithBranches.push(p));
             projectsWithBranches[state.selectedProjectIndex] = action.project;
             return Object.assign({},state,{projects:projectsWithBranches});
-            //return state;
         default: {
             return state;
         }

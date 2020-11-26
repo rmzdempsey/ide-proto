@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import * as fromRoot from '../store/reducers';
 import * as TemplateActions from '../store/actions/template-actions';
 import * as ProjectActions from '../store/actions/project-actions';
-import {ConsoleUpdateAction} from '../store/actions/console-action';
+import {UpdateConsoleAction} from '../store/actions/console-action';
 
 const electron = (<any>window).require('electron');
 
@@ -52,12 +52,12 @@ export class ConfigService {
     });
 
     electron.ipcRenderer.on('updateConsoleStdOut', (event, name, data) => {
-      this.store.dispatch(new ConsoleUpdateAction({name:name,line:data}));
+      this.store.dispatch(new UpdateConsoleAction(name,data));
       
     });
 
     electron.ipcRenderer.on('updateConsoleStdErr', (event, name, data) => {
-      this.store.dispatch(new ConsoleUpdateAction({name:name,line:data}));
+      this.store.dispatch(new UpdateConsoleAction(name,data));
     });
 
     electron.ipcRenderer.on('appBranchInfo', (event, project)=>{
