@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable,NgZone } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import {Template} from '../model/template';
 import {Project} from '../model/project';
@@ -20,7 +20,7 @@ export class ConfigService {
 
   constructor(
     private store: Store<fromRoot.State>,
-    
+    private zone: NgZone,
   ) { 
 
     electron.ipcRenderer.on('getTemplatesResponse', (event, templates) => {
@@ -61,7 +61,10 @@ export class ConfigService {
     });
 
     electron.ipcRenderer.on('appBranchInfo', (event, project)=>{
-      this.store.dispatch(new ProjectActions.LoadAppBranchesAction(project));
+      this.zone.run(()=>{
+        this.store.dispatch(new ProjectActions.LoadAppBranchesAction(project));
+      })
+      
     });
 
     this.templatesSubject.subscribe((value) => {

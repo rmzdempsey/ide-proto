@@ -4,5 +4,5 @@
     "remoteUrl":"https://primera-dev/dummy.com",
     "port":8810,
     "debugPort":8811,
-    "repo":"https://github.com/rmzdempsey/hello-spring-api.git"
+    "repo":"https://github.com/rmzdempsey/ide-proto.git"
 }
