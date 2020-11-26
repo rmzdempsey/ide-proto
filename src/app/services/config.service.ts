@@ -95,7 +95,6 @@ export class ConfigService {
     electron.ipcRenderer.send('getProjects');
   }
 
-
   newProject(projectName:string, templates:any){
     electron.ipcRenderer.send('createProject', projectName, templates );
   }
@@ -105,7 +104,6 @@ export class ConfigService {
   }
 
   cloneApps(project:Project){
-    console.log("CLONE APPS", project )
     electron.ipcRenderer.send('cloneApps', project );
   }
 }
