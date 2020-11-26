@@ -60,8 +60,8 @@ export class ConfigService {
       this.store.dispatch(new ConsoleUpdateAction({name:name,line:data}));
     });
 
-    electron.ipcRenderer.on('appBranchInfo', (event, appName, branches, currentBranch)=>{
-      this.store.dispatch(new ProjectActions.LoadAppBranchesAction(appName,branches,currentBranch));
+    electron.ipcRenderer.on('appBranchInfo', (event, project)=>{
+      this.store.dispatch(new ProjectActions.LoadAppBranchesAction(project));
     });
 
     this.templatesSubject.subscribe((value) => {
@@ -102,6 +102,7 @@ export class ConfigService {
   }
 
   cloneApps(project:Project){
+    console.log("CLONE APPS", project )
     electron.ipcRenderer.send('cloneApps', project );
   }
 }

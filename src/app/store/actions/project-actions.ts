@@ -81,7 +81,7 @@ export class LoadAppBranchesAction implements Action {
 
     readonly type = LOAD_APP_BRANCHES_ACTION
 
-    constructor(public projectName: string, public branches: Array<string>, public currentBranch: string ){}
+    constructor(public project: Project ){}
 }
 
 export type Actions = LoadProjectsAction | SelectProjectAction | NewProjectAction | NewProjectSuccessAction | NewProjectFailedAction | DeleteProjectAction | DeleteProjectSuccessAction | DeleteProjectFailedAction | LoadAppBranchesAction;

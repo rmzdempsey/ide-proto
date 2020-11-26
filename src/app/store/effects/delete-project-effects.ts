@@ -1,21 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {ConfigService} from '../../services/config.service';
-import { map} from 'rxjs/operators';
-import {DELETE_PROJECT_ACTION, NEW_PROJECT_ACTION} from '../actions/project-actions';
-import {NoOpAction} from '../actions/noop-action';
+import { tap} from 'rxjs/operators';
+import {DELETE_PROJECT_ACTION} from '../actions/project-actions';
 
 
 @Injectable()
 export class DeleteProjectEffects {
 
-    deleteProject$ = createEffect(() => this.actions$.pipe(
-        ofType(DELETE_PROJECT_ACTION),
-        map(action=>{
-            this.configService.deleteProject(action['projectName']);
-            return new NoOpAction();
-        })
-        )
+    deleteProject$ = createEffect(() => 
+        this.actions$.pipe(
+            ofType(DELETE_PROJECT_ACTION),
+            tap(action=>this.configService.deleteProject(action['projectName']))
+        ),
+        {dispatch:false}
     );
      
     constructor(

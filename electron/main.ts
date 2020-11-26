@@ -105,10 +105,11 @@ ipcMain.on("cloneApps", (event, project) => {
   
   const homedir = require('os').homedir();
   const projectDir = homedir + '/dtp-ide/' + project['name']
-  project.apps.forEach(app=>cloneApp(projectDir, app))
+  project.apps.forEach(app=>cloneApp(projectDir, project, app))
 });
 
-function cloneApp(projDir, app){
+function cloneApp(projDir, project, app){
+  if (fs.existsSync(projDir + "/" + app.template.appName)) return;
   const ls = spawn("git", ["clone", "--progress", "--verbose", app.template.repo, projDir + "/" + app.template.appName]);
 
   ls.stdout.on("data", data => {
@@ -126,16 +127,14 @@ function cloneApp(projDir, app){
   });
 
   ls.on("close", code => {
+    //console.log(`CA child process exited with code ${code}`);
       if( code == 0 ){
-        getBranches(projDir, app);
-      }
-      else{
-        console.log(`child process exited with code ${code}`);
+        getBranches(projDir, project, app);
       }
   });
 }
 
-function getBranches(projDir, app){
+function getBranches(projDir, project, app){
   const branches : Array<string> = [];
   const ls = spawn("git", ["branch", "-r"], {cwd: projDir + "/" + app.template.appName });
 
@@ -158,7 +157,8 @@ function getBranches(projDir, app){
 
   ls.on("close", code => {
       if( code == 0 ){
-        getCurrentBranch(projDir,app, branches)
+        app.branches = branches;
+        getCurrentBranch(projDir, project, app)
       }
       else{
         console.log(`GB child process exited with code ${code}`);
@@ -166,12 +166,12 @@ function getBranches(projDir, app){
   });
 }
 
-function getCurrentBranch(projDir, app, branches){
+function getCurrentBranch(projDir, project, app){
   const ls = spawn("git", ["rev-parse", "--abbrev-ref", "HEAD"], {cwd: projDir + "/" + app.template.appName });
-  let currentBranch;
+  let currentBranch : string;
 
   ls.stdout.on("data", data => {
-    currentBranch = String.fromCharCode.apply(null, data)
+    currentBranch = String.fromCharCode.apply(null, data).trim()
   });
 
   ls.stderr.on("data", data => {
@@ -184,7 +184,8 @@ function getCurrentBranch(projDir, app, branches){
 
   ls.on("close", code => {
       if(code==0){
-        win.webContents.send("appBranchInfo", app.template.appName, branches, currentBranch );
+        app.currentBranch = currentBranch
+        win.webContents.send("appBranchInfo", project );
       }
       else{
         console.log(`CGB child process exited with code ${code}`);

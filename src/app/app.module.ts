@@ -12,7 +12,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input'
 import {MatCheckboxModule} from '@angular/material/checkbox'
 import {FormsModule} from '@angular/forms';
-import { ProjectPanelComponent } from './ui/project-panel/project-panel.component';
+import { ProjectPanelComponent } from './ui/panels/project-panel/project-panel.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {StoreModule} from '@ngrx/store';
 import * as fromRoot from './store/reducers';
@@ -29,6 +29,8 @@ import { EffectsModule } from '@ngrx/effects';
 import { LoginEffects } from './store/effects/login.effects';
 import { NewProjectEffects } from './store/effects/new-project-effects';
 import { DeleteProjectEffects } from './store/effects/delete-project-effects';
+import { AppPanelComponent } from './ui/panels/app-panel/app-panel.component';
+import { ConsolePanelComponent } from './ui/panels/console-panel/console-panel.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,9 @@ import { DeleteProjectEffects } from './store/effects/delete-project-effects';
     ProjectPanelComponent,
     LoginPanelComponent,
     MainMenuComponent,
-    OpenProjectComponent
+    OpenProjectComponent,
+    AppPanelComponent,
+    ConsolePanelComponent
   ],
   imports: [
     BrowserModule,
