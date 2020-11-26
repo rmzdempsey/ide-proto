@@ -109,29 +109,33 @@ ipcMain.on("cloneApps", (event, project) => {
 });
 
 function cloneApp(projDir, project, app){
-  if (fs.existsSync(projDir + "/" + app.template.appName)) return;
-  const ls = spawn("git", ["clone", "--progress", "--verbose", app.template.repo, projDir + "/" + app.template.appName]);
+  if (!fs.existsSync(projDir + "/" + app.template.appName)){
+    const ls = spawn("git", ["clone", "--progress", "--verbose", app.template.repo, projDir + "/" + app.template.appName]);
 
-  ls.stdout.on("data", data => {
-    const line : string = String.fromCharCode.apply(null, data)
-    win.webContents.send("updateConsoleStdOut", app.template.appName, line );
-  });
+    ls.stdout.on("data", data => {
+      const line : string = String.fromCharCode.apply(null, data)
+      win.webContents.send("updateConsoleStdOut", app.template.appName, line );
+    });
 
-  ls.stderr.on("data", data => {
-    const line : string = String.fromCharCode.apply(null, data)
-    win.webContents.send("updateConsoleStdErr", app.template.appName, line );
-  });
+    ls.stderr.on("data", data => {
+      const line : string = String.fromCharCode.apply(null, data)
+      win.webContents.send("updateConsoleStdErr", app.template.appName, line );
+    });
 
-  ls.on('error', (error) => {
-      console.log(`error: ${error.message}`);
-  });
+    ls.on('error', (error) => {
+        console.log(`error: ${error.message}`);
+    });
 
-  ls.on("close", code => {
-    //console.log(`CA child process exited with code ${code}`);
-      if( code == 0 ){
-        getBranches(projDir, project, app);
-      }
-  });
+    ls.on("close", code => {
+      //console.log(`CA child process exited with code ${code}`);
+        if( code == 0 ){
+          getBranches(projDir, project, app);
+        }
+    });
+  }
+  else{
+    getBranches(projDir, project, app);
+  }
 }
 
 function getBranches(projDir, project, app){
