@@ -7,6 +7,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { Project } from 'src/app/model/project';
 import {SelectProjectAction} from '../../../store/actions/project-actions'
 import { ConfigService } from 'src/app/services/config.service';
+import { CreateConsoleAction } from 'src/app/store/actions/console-action';
 
 @Component({
   selector: 'app-open-project',
@@ -46,7 +47,11 @@ export class OpenProjectComponent implements OnInit, OnDestroy {
   okClicked(){
     if(this.fg.valid){
       this.dialogRef.close()
-      this.store.dispatch( new SelectProjectAction(this.fg.get('selectedProject').value) )
+      let project : Project = this.fg.get('selectedProject').value;
+      this.store.dispatch( new SelectProjectAction(project) )
+      project.apps.forEach(a=>{
+        this.store.dispatch(new CreateConsoleAction(a.template.appName))
+      })
     }
   }
 

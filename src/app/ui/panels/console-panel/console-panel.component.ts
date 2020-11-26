@@ -1,45 +1,35 @@
-import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Application } from 'src/app/model/application';
 import { Subscription } from 'rxjs';
-import { Actions, ofType } from '@ngrx/effects';
-import {CONSOLE_UPDATE_ACTION} from '../../../store/actions/console-action';
+import { Store } from '@ngrx/store';
+import * as fromRoot from '../../../store/reducers';
 
 @Component({
   selector: 'app-console-panel',
   templateUrl: './console-panel.component.html',
   styleUrls: ['./console-panel.component.scss']
 })
-export class ConsolePanelComponent implements OnInit {
+export class ConsolePanelComponent implements OnInit, OnDestroy {
 
   @Input() app : Application;
   txt: string;
   consoleSubscription: Subscription;
 
   constructor(
-    private actions$: Actions,
-    private cdr : ChangeDetectorRef
+    private store: Store<fromRoot.State>,
   ) { }
 
   ngOnInit(): void {
     this.txt = ''
 
-    this.consoleSubscription = this.actions$.pipe(
-      ofType(CONSOLE_UPDATE_ACTION),
-    ).subscribe(value=>{
-      if( value['data']['name']==this.app.template.appName ){
-        this.append(value['data']['line'])
-        this.cdr.detectChanges()
+    this.consoleSubscription = this.store.select(fromRoot.consoles,this.app.template.appName).subscribe(value=>{
+      if(value){
+        this.txt = value;
       }
-    });
+    }); 
   }
 
-  append(line : string ){
-
-    this.txt = this.txt + line
-    
-    // let txt = document.getElementById(appName);
-    // txt['value'] = txt['value'] + line
-    // txt.scrollTop = txt.scrollHeight;
+  ngOnDestroy(){
+    this.consoleSubscription?.unsubscribe();
   }
-
 }

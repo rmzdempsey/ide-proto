@@ -3,6 +3,7 @@ import * as fromLogin from './login-reducer';
 import * as fromProject from './project-reducer';
 import * as fromTemplate from './template-reducer';
 import * as fromError from './error-reducer';
+import * as fromConsoles from './console-reducer';
 import { createSelector } from '@ngrx/store';
 
 export interface State {
@@ -10,6 +11,7 @@ export interface State {
     project : fromProject.State;
     template: fromTemplate.State;
     error: fromError.State;
+    consoles: fromConsoles.State;
 }
 
 export const reducers : ActionReducerMap<State> = {
@@ -17,6 +19,7 @@ export const reducers : ActionReducerMap<State> = {
     project : fromProject.reducer,
     template : fromTemplate.reducer,
     error: fromError.reducer,
+    consoles: fromConsoles.reducer
 }
 
 export const loggedIn = (state:State)=> state.login.loggedIn;
@@ -36,3 +39,6 @@ export const projectNames = (state:State)=> state.project.projects.map(p=>p.name
 export const templates = (state:State)=> state.template.templates
 
 export const errorMessage = (state:State)=> state.error.message
+
+export const consoles = (state:State, appName: string)=> state.consoles.consoles.find(c=>c.appName==appName)?.buffer
+

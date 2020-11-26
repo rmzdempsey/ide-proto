@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {ConfigService} from '../../services/config.service';
+import {Project} from '../../model/project';
 import { tap } from 'rxjs/operators';
-import {NEW_PROJECT_ACTION,CLONE_APPS_ACTION, NEW_PROJECT_ACTION_SUCCESS} from '../actions/project-actions';
-
+import { CreateConsoleAction} from '../actions/console-action';
+import {NEW_PROJECT_ACTION, NEW_PROJECT_ACTION_SUCCESS, PROJECT_SELECTED_ACTION} from '../actions/project-actions';
+import { Store } from '@ngrx/store';
+import * as fromRoot from '../reducers';
 
 @Injectable()
 export class NewProjectEffects {
@@ -19,13 +22,36 @@ export class NewProjectEffects {
     cloneApps$ = createEffect(() => 
         this.actions$.pipe(
             ofType(NEW_PROJECT_ACTION_SUCCESS),
-            tap(action=>this.configService.cloneApps(action['project']))
+            tap(action=>{
+                let project : Project = action['project']
+                project.apps.forEach(a=>{
+                    this.store.dispatch(  new CreateConsoleAction(a.template.appName) );
+                })
+                return action
+            }),
+            tap(action=>{
+                this.configService.cloneApps(action['project'])
+                return action
+            })
+        ),
+        {dispatch:false}
+    );
+
+    openProject$ = createEffect(() => 
+        this.actions$.pipe(
+            ofType(PROJECT_SELECTED_ACTION),
+            tap(action=>{
+                if( action['project'])
+                    this.configService.cloneApps(action['project'])
+                return action
+            })
         ),
         {dispatch:false}
     );
      
     constructor(
     private actions$: Actions,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private store: Store<fromRoot.State>,
     ) {}
 }
