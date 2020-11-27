@@ -9,7 +9,7 @@
     <ng-container *ngIf="selectedProject">
         <div fxLayout="column" fxLayoutGap="10px" class="main-content" cdkDropList (cdkDropListDropped)="drop($event)">
 
-            <app-app-panel [app]="app" *ngFor="let app of cards;"></app-app-panel>
+            <app-app-panel [app]="app" [project]="selectedProject" *ngFor="let app of cards;"></app-app-panel>
         
         </div>
     </ng-container>

@@ -1,6 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select';
 import { Application } from 'src/app/model/application';
+import { Project } from 'src/app/model/project';
+import { Store } from '@ngrx/store';
+import * as fromRoot from '../../../store/reducers';
+import { BranchChangedAction } from '../../../store/actions/project-actions'
 
 @Component({
   selector: 'app-app-panel',
@@ -9,10 +14,13 @@ import { Application } from 'src/app/model/application';
 })
 export class AppPanelComponent implements OnInit {
 
+  @Input() project : Project;
   @Input() app : Application;
   fg: FormGroup;
 
-  constructor() { }
+  constructor(
+    private store: Store<fromRoot.State>,
+  ) { }
 
   ngOnInit(): void {
     this.fg = new FormGroup({})
@@ -34,4 +42,7 @@ export class AppPanelComponent implements OnInit {
     this.fg.get('debugWait').setValue(evt.source.checked)
   }
 
+  branchChange(evt: MatSelectChange){
+    this.store.dispatch( new BranchChangedAction( this.project, this.app.template.appName, evt.value) )
+  }
 }

@@ -14,7 +14,7 @@ export class ConsolePanelComponent implements OnInit, OnDestroy {
   @Input() app : Application;
   txt: string;
   consoleSubscription: Subscription;
-
+  
   constructor(
     private store: Store<fromRoot.State>,
   ) { }
@@ -32,4 +32,5 @@ export class ConsolePanelComponent implements OnInit, OnDestroy {
   ngOnDestroy(){
     this.consoleSubscription?.unsubscribe();
   }
+
 }

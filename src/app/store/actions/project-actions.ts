@@ -14,6 +14,8 @@ export const DELETE_PROJECT_FAILURE_ACTION = '[DtpIde] Project Deleted Failed';
 
 export const CLONE_APPS_ACTION = '[DtpIde] Clone Apps Action';
 export const LOAD_APP_BRANCHES_ACTION = '[DtpIde] Load App Branches Action';
+export const BRANCH_CHANGED_ACTION = '[DtpIde] Branch Changed Action';
+export const BRANCH_CHANGED_SUCCESS_ACTION = '[DtpIde] Branch Changed Success Action';
 
 export class LoadProjectsAction implements Action {
 
@@ -84,4 +86,20 @@ export class LoadAppBranchesAction implements Action {
     constructor(public project: Project ){}
 }
 
-export type Actions = LoadProjectsAction | SelectProjectAction | NewProjectAction | NewProjectSuccessAction | NewProjectFailedAction | DeleteProjectAction | DeleteProjectSuccessAction | DeleteProjectFailedAction | LoadAppBranchesAction;
+export class BranchChangedAction implements Action {
+
+    readonly type = BRANCH_CHANGED_ACTION;
+
+    constructor(public project: Project, public appName: string, public branchName: string ){}
+}
+
+export class BranchChangeSuccessAction implements Action {
+
+    readonly type = BRANCH_CHANGED_SUCCESS_ACTION;
+
+    constructor(public projectName: string, public appName: string, public branchName: string ){}
+}
+
+export type Actions = (LoadProjectsAction | SelectProjectAction | NewProjectAction | NewProjectSuccessAction 
+    | NewProjectFailedAction | DeleteProjectAction | DeleteProjectSuccessAction | DeleteProjectFailedAction 
+    | LoadAppBranchesAction | BranchChangedAction | BranchChangeSuccessAction );
