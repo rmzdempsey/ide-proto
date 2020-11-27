@@ -197,3 +197,35 @@ function getCurrentBranch(projDir, project, app){
       
   });
 }
+
+ipcMain.on("changeBranch", (event, projectName, appName, branchName) => {
+  const homedir = require('os').homedir();
+  const appDir = homedir + '/dtp-ide/' + projectName + '/' + appName
+
+  const ls = spawn("git", ["checkout", branchName], {cwd: appDir });
+
+  ls.stdout.on("data", data => {
+    let line = String.fromCharCode.apply(null, data).trim()
+    win.webContents.send("updateConsoleStdOut", appName, line );
+      //currentBranch = String.fromCharCode.apply(null, data).trim()
+    });
+  
+    ls.stderr.on("data", data => {
+      let line = String.fromCharCode.apply(null, data).trim()
+      win.webContents.send("updateConsoleStdErr", appName, line );
+    });
+  
+    ls.on('error', (error) => {
+        console.log(`CkB error: ${error.message}`);
+    });
+  
+    ls.on("close", code => {
+      if( code != 0 )
+        console.log(`CkB child process exited with code ${code}`);
+      else{
+        win.webContents.send("branchChangedSuccess", projectName, appName, branchName );
+      }
+      
+    });
+});
+

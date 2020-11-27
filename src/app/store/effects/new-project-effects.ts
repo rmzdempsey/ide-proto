@@ -4,7 +4,7 @@ import {ConfigService} from '../../services/config.service';
 import {Project} from '../../model/project';
 import { tap } from 'rxjs/operators';
 import { CreateConsoleAction} from '../actions/console-action';
-import {NEW_PROJECT_ACTION, NEW_PROJECT_ACTION_SUCCESS, PROJECT_SELECTED_ACTION} from '../actions/project-actions';
+import {NEW_PROJECT_ACTION, NEW_PROJECT_ACTION_SUCCESS, PROJECT_SELECTED_ACTION, BRANCH_CHANGED_ACTION} from '../actions/project-actions';
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../reducers';
 
@@ -43,6 +43,18 @@ export class NewProjectEffects {
             tap(action=>{
                 if( action['project'])
                     this.configService.cloneApps(action['project'])
+                return action
+            })
+        ),
+        {dispatch:false}
+    );
+
+    changeBranch$ = createEffect(() => 
+        this.actions$.pipe(
+            ofType(BRANCH_CHANGED_ACTION),
+            tap(action=>{
+                if( action['project'])
+                    this.configService.changeBranch(action['project'],action['appName'],action['branchName'])
                 return action
             })
         ),

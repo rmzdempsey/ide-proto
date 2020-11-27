@@ -23,7 +23,12 @@ export function reducer(state: State = initialState, action: ConsoleActions.Acti
         case ConsoleActions.UPDATE_CONSOLE:{
             let consoles : Array<ConsoleBuffer> = state.consoles.filter(c=>c.appName!=action.name);
             let console = state.consoles.find(c=>c.appName==action.name)
-            let newConsole : ConsoleBuffer = Object.assign({},console,{buffer:console.buffer + action.data});
+            let newBuffer: string = console.buffer;
+            if( newBuffer.length > 0 ){
+                newBuffer = newBuffer + '\n';
+            }
+            newBuffer = newBuffer + action.data;
+            let newConsole : ConsoleBuffer = Object.assign({},console,{buffer:newBuffer});
             consoles.push(newConsole);
             return Object.assign({},state,{consoles:consoles})
         }

@@ -21,7 +21,7 @@
 
                             <div *ngIf="fg?.get('runLocal')?.value==true">
                                 <mat-label>Branch</mat-label>
-                                <mat-select [(value)]="app.currentBranch">
+                                <mat-select [value]="app.currentBranch" (selectionChange)="branchChange($event)">
                                     <mat-option *ngFor="let b of app.branches" [value]="b">
                                         {{b}}
                                   </mat-option>

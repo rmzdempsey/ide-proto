@@ -67,6 +67,12 @@ export class ConfigService {
       
     });
 
+    electron.ipcRenderer.on('branchChangedSuccess',(event, projectName, appName, branchName )=>{
+      this.zone.run(()=>{
+        this.store.dispatch(new ProjectActions.BranchChangeSuccessAction(projectName, appName, branchName ));
+      })
+    })
+
     this.templatesSubject.subscribe((value) => {
       this.store.dispatch(new TemplateActions.LoadTemplatesAction(value));
     });
@@ -105,5 +111,9 @@ export class ConfigService {
 
   cloneApps(project:Project){
     electron.ipcRenderer.send('cloneApps', project );
+  }
+
+  changeBranch(project:Project, appName: string, branchName: string ){
+    electron.ipcRenderer.send('changeBranch', project.name, appName, branchName );
   }
 }

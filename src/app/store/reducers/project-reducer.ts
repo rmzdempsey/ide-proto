@@ -42,6 +42,8 @@ export function reducer(state: State = initialState, action: ProjectActions.Acti
             state.projects.forEach(p=>projectsWithBranches.push(p));
             projectsWithBranches[state.selectedProjectIndex] = action.project;
             return Object.assign({},state,{projects:projectsWithBranches});
+        case ProjectActions.BRANCH_CHANGED_SUCCESS_ACTION:
+            return state;
         default: {
             return state;
         }
