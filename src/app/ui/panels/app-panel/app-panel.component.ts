@@ -43,7 +43,6 @@ export class AppPanelComponent implements OnInit {
   }
 
   branchChange(evt: MatSelectChange){
-    console.log('MatSelectChange', evt.value);
     this.store.dispatch( new BranchChangedAction( this.project, this.app.template.appName, evt.value) )
   }
 }
