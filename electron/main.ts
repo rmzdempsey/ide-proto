@@ -18,7 +18,7 @@ app.on('activate', () => {
 
 
   function createWindow() {
-    win = new BrowserWindow({ width: 1000, height: 800, webPreferences: { nodeIntegration: true } })
+    win = new BrowserWindow({ width: 1200, height: 800, webPreferences: { nodeIntegration: true } })
   
     win.loadURL(
       url.format({
@@ -86,7 +86,7 @@ ipcMain.on("createProject", (event, projectName, templates) => {
     fs.writeFile(homedir + '/dtp-ide/' + projectName + '/project.json', data, (err) => {
       if (err) win.webContents.send("createProjectErrorResponse", err.message );
       else {
-        win.webContents.send("createProjectResponse", project );
+        win.webContents.send("createProjectResponse", {name:project.name, templateNames: templates.map(t=>t.appName)} );
       }
     });
   });
@@ -97,7 +97,7 @@ ipcMain.on("deleteProject", (event, projectName) => {
   const homedir = require('os').homedir();
   fs.rmdir( homedir + '/dtp-ide/' + projectName , { recursive: true }, (err) => {
     if (err) win.webContents.send("deleteProjectErrorResponse", projectName, err.message );
-    else win.webContents.send("deleteProjectResponse");
+    else win.webContents.send("deleteProjectResponse",projectName);
   });
 });
 
@@ -123,14 +123,13 @@ function cloneApp(projDir, project, app){
     });
 
     ls.on('error', (error) => {
-        console.log(`error: ${error.message}`);
+      console.log(`error: ${error.message}`);
     });
 
     ls.on("close", code => {
-      //console.log(`CA child process exited with code ${code}`);
-        if( code == 0 ){
-          getBranches(projDir, project, app);
-        }
+      if( code == 0 ){
+        getBranches(projDir, project, app);
+      }
     });
   }
   else{
@@ -148,7 +147,6 @@ function getBranches(projDir, project, app){
 
     const lines = txt.split(os.EOL);
     lines.map(l=>l.trim()).filter(l=>l.length > 0 ).filter(l=>!l.startsWith('origin/HEAD')).map(l=>l.substring(7)).forEach(l=>branches.push(l))
-    //console.log(`GB stdout branches: ${branches}`);
   });
 
   ls.stderr.on("data", data => {
@@ -228,4 +226,30 @@ ipcMain.on("changeBranch", (event, projectName, appName, branchName) => {
       
     });
 });
+
+ipcMain.on("initialiseIde", (event) => {
+  fs.readdir('./templates', {withFileTypes: true}, (err, files) => {
+    
+    if (!err) {
+      const templateFiles = files
+        .filter(file => !file.isDirectory())
+        .map(file => JSON.parse(fs.readFileSync('./templates/'+file.name,"utf8")));
+      
+      const homedir = require('os').homedir();
+    
+      fs.readdir( homedir + '/dtp-ide', {withFileTypes: true}, (err, files) => {
+          if (!err) {
+            const projectFiles = files
+              .filter(file => file.isDirectory() && !file.name.startsWith("."))
+              .map(file => {
+                let obj = JSON.parse(fs.readFileSync(homedir + '/dtp-ide/'+file.name+'/project.json',"utf8"));
+                return {name:file.name,templateNames:obj.apps.map(a=>a.template.appName) }
+              });
+
+            win.webContents.send("initialiseIdeSuccess", templateFiles, projectFiles );
+          }
+      });
+    }
+  });
+})
 

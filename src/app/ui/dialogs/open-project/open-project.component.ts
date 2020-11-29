@@ -4,10 +4,7 @@ import * as fromRoot from '../../../store/reducers';
 import {MatDialogRef} from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import { Project } from 'src/app/model/project';
-import {SelectProjectAction} from '../../../store/actions/project-actions'
-import { ConfigService } from 'src/app/services/config.service';
-import { CreateConsoleAction } from 'src/app/store/actions/console-action';
+import { IdeSelectProjectAction } from 'src/app/store/actions/ide-actions';
 
 @Component({
   selector: 'app-open-project',
@@ -18,25 +15,22 @@ export class OpenProjectComponent implements OnInit, OnDestroy {
 
   fg: FormGroup;
   projectsSubscription : Subscription;
-  projects: Array<Project>;
+  projects: Array<string>;
 
   constructor(
-    private configService : ConfigService,
     public dialogRef: MatDialogRef<OpenProjectComponent>,
     private store: Store<fromRoot.State>
     ) { }
 
   ngOnInit(): void {
     this.projects = [];
-    this.projectsSubscription = this.store.select(fromRoot.projects).subscribe(value=>{
+    this.projectsSubscription = this.store.select(fromRoot.projectNames).subscribe(value=>{
       this.projects = value;
     }); 
 
     this.fg = new FormGroup({
       selectedProject: new FormControl('',[Validators.required]),
     });
-
-    this.configService.getProjects();
   }
 
   ngOnDestroy(): void {
@@ -47,11 +41,8 @@ export class OpenProjectComponent implements OnInit, OnDestroy {
   okClicked(){
     if(this.fg.valid){
       this.dialogRef.close()
-      let project : Project = this.fg.get('selectedProject').value;
-      this.store.dispatch( new SelectProjectAction(project) )
-      project.apps.forEach(a=>{
-        this.store.dispatch(new CreateConsoleAction(a.template.appName))
-      })
+      let projectName : string = this.fg.get('selectedProject').value;
+      this.store.dispatch( new IdeSelectProjectAction(projectName));
     }
   }
 

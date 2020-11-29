@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { Application } from 'src/app/model/application';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../../../store/reducers';
@@ -11,7 +10,7 @@ import * as fromRoot from '../../../store/reducers';
 })
 export class ConsolePanelComponent implements OnInit, OnDestroy {
 
-  @Input() app : Application;
+  @Input() appName : string;
   txt: string;
   consoleSubscription: Subscription;
   
@@ -22,7 +21,7 @@ export class ConsolePanelComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.txt = ''
 
-    this.consoleSubscription = this.store.select(fromRoot.consoles,this.app.template.appName).subscribe(value=>{
+    this.consoleSubscription = this.store.select(fromRoot.consoles,this.appName).subscribe(value=>{
       if(value){
         this.txt = value;
       }

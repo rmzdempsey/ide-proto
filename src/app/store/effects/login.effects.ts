@@ -4,8 +4,7 @@ import {LoginService} from '../../services/login.service';
 import {ConfigService} from '../../services/config.service';
 import { map, mergeMap, catchError } from 'rxjs/operators';
 import {LOGIN_ACTION, LOGIN_RESULT, LoginResultAction} from '../actions/login-actions';
-import {LoadTemplatesAction} from '../actions/template-actions'
-import {LoadProjectsAction} from '../actions/project-actions'
+//import {LoadProjectsAction} from '../actions/project-actions'
 
 @Injectable()
 export class LoginEffects {
@@ -20,27 +19,27 @@ export class LoginEffects {
         )
     );
 
-    loginResultTemplates$ = createEffect(() => this.actions$.pipe(
-        ofType(LOGIN_RESULT),
-        mergeMap(action =>
-            this.configService.getTemplates()
-          .pipe(
-            map(templates => new LoadTemplatesAction(templates)),
-            //catchError(() => EMPTY)
-          ))
-        )
-    );
+    // loginResultTemplates$ = createEffect(() => this.actions$.pipe(
+    //     ofType(LOGIN_RESULT),
+    //     mergeMap(action =>
+    //         this.configService.getTemplates()
+    //       .pipe(
+    //         map(templates => new LoadTemplatesAction(templates)),
+    //         //catchError(() => EMPTY)
+    //       ))
+    //     )
+    // );
 
-    loginResultProjects$ = createEffect(() => this.actions$.pipe(
-        ofType(LOGIN_RESULT),
-        mergeMap(action =>
-            this.configService.getProjects()
-          .pipe(
-            map(projects => new LoadProjectsAction(projects)),
-            //catchError(() => EMPTY)
-          ))
-        )
-    );
+    // loginResultProjects$ = createEffect(() => this.actions$.pipe(
+    //     ofType(LOGIN_RESULT),
+    //     mergeMap(action =>
+    //         this.configService.getProjects()
+    //       // .pipe(
+    //       //   map(projects => new LoadProjectsAction(projects)),
+    //         //catchError(() => EMPTY)
+    //       ))
+    //     )
+    // );
      
     constructor(
     private actions$: Actions,

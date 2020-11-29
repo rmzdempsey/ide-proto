@@ -18,31 +18,6 @@ export const initialState: State = {
 
 export function reducer(state: State = initialState, action: ProjectActions.Actions ) {
     switch(action.type){
-        case ProjectActions.PROJECTS_LOAD_ACTION:
-            return Object.assign({},state,{selectedProjectIndex:-1, projects: action.projects });
-        case ProjectActions.NEW_PROJECT_ACTION:
-            return Object.assign({},state);
-        case ProjectActions.NEW_PROJECT_ACTION_SUCCESS:
-            let projects : Array<Project> = [];
-            state.projects.forEach(p=>projects.push(p));
-            projects.unshift(action.project)
-            return Object.assign({},state,{selectedProjectIndex:0, projects: projects });
-        case ProjectActions.DELETE_PROJECT_SUCCESS_ACTION:
-            if( state.selectedProjectIndex >= 0 ){
-                let projects : Array<Project> = [];
-                state.projects.forEach(p=>projects.push(p));
-                projects.splice(state.selectedProjectIndex,1);
-                return Object.assign({},state,{selectedProjectIndex:-1, projects: projects });
-            }
-            return state;
-        case ProjectActions.PROJECT_SELECTED_ACTION:
-            let idx = state.projects.indexOf(action.project);
-            return Object.assign({},state,{selectedProjectIndex:idx });
-        case ProjectActions.LOAD_APP_BRANCHES_ACTION:
-            let projectsWithBranches : Array<Project> = [];
-            state.projects.forEach(p=>projectsWithBranches.push(p));
-            projectsWithBranches[state.selectedProjectIndex] = action.project;
-            return Object.assign({},state,{projects:projectsWithBranches});
         case ProjectActions.BRANCH_CHANGED_SUCCESS_ACTION:{
             
             let targetP = state.projects.find(p=>p.name==action.projectName);

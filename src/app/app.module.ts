@@ -28,7 +28,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { LoginEffects } from './store/effects/login.effects';
 import { NewProjectEffects } from './store/effects/new-project-effects';
-import { DeleteProjectEffects } from './store/effects/delete-project-effects';
+import { IdeEffects } from './store/effects/ide.effects';
 import { AppPanelComponent } from './ui/panels/app-panel/app-panel.component';
 import { ConsolePanelComponent } from './ui/panels/console-panel/console-panel.component';
 
@@ -62,7 +62,7 @@ import { ConsolePanelComponent } from './ui/panels/console-panel/console-panel.c
     MatCardModule,
     DragDropModule,
     StoreModule.forRoot(fromRoot.reducers),
-    EffectsModule.forRoot([LoginEffects,NewProjectEffects,DeleteProjectEffects]),
+    EffectsModule.forRoot([LoginEffects,NewProjectEffects, IdeEffects]),
   ],
   providers: [],
   bootstrap: [AppComponent]

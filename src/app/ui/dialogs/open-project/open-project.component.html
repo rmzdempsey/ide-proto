@@ -8,7 +8,7 @@
             <mat-label>Project</mat-label>
             <mat-select formControlName="selectedProject">
               <mat-option *ngFor="let p of projects" [value]="p">
-                {{p.name}}
+                {{p}}
               </mat-option>
             </mat-select>
           </mat-form-field>
