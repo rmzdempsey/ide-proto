@@ -1,4 +1,5 @@
 import { Action } from '@ngrx/store';
+import { BranchDetails } from 'src/app/model/branch-details';
 import {Project2} from '../../model/project';
 import {Template} from '../../model/template';
 
@@ -14,6 +15,10 @@ export const CLEAR_CONSOLE = '[DtpIde] Clear Console Action';
 export const IDE_RUN_LOCAL_ACTION = '[DtpIde] Ide Run Local Action';
 export const IDE_START_ACTION = '[DtpIde] Ide Start Action';
 export const IDE_STOP_ACTION = '[DtpIde] Ide Stop Action';
+export const IDE_GET_BRANCHES_ACTION = '[DtpIde] Ide Get Branches Action';
+export const IDE_GET_BRANCHES_SUCCESS_ACTION = '[DtpIde] Ide Get Branches Success Action';
+export const IDE_APP_CLONED_ACTION = '[DtpIde] Ide App Cloned Action';
+export const IDE_BRANCH_SELECTED_ACTION = '[DtpIde] Ide Branch Selected';
 
 export class IdeInitAction implements Action {
     readonly type = INIT_ACTION;
@@ -49,6 +54,11 @@ export class IdeDeleteProjectSuccessAction implements Action {
     constructor( public projectName: string ){}
 }
 
+export class IdeAppClonedAction implements Action{
+    readonly type = IDE_APP_CLONED_ACTION;
+    constructor( public projectName: string, public appName: string  ){}
+}
+
 export class UpdateConsoleAction implements Action {
     readonly type = UPDATE_CONSOLE;
     constructor( public name: string, public data:string  ){}
@@ -72,6 +82,22 @@ export class IdeStopAction implements Action {
     readonly type = IDE_STOP_ACTION;
 }
 
+export class IdeGetBranchesAction implements Action {
+    readonly type = IDE_GET_BRANCHES_ACTION;
+    constructor( public projectName: string, public appName: string ){}
+}
+
+export class IdeGetBranchesSuccessAction implements Action {
+    readonly type = IDE_GET_BRANCHES_SUCCESS_ACTION;
+    constructor( public projectName: string, public appName: string, public branches : Array<string> ){}
+}
+
+export class IdeBranchChangedAction implements Action{
+    readonly type = IDE_BRANCH_SELECTED_ACTION;
+    constructor( public appName: string, public branch : string ){}
+}
+
+
 
 export type Actions = IdeInitAction
     | IdeInitSuccessAction
@@ -81,4 +107,6 @@ export type Actions = IdeInitAction
     | UpdateConsoleAction | ClearConsoleAction
     | IdeRunLocalAction
     | IdeStartAction | IdeStopAction
+    | IdeGetBranchesAction | IdeGetBranchesSuccessAction | IdeBranchChangedAction
+    | IdeAppClonedAction
     ;

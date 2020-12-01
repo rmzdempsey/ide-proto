@@ -25,6 +25,8 @@ export const templates = (state:State)=> state.ide.templates
 export const running = (state:State)=> state.ide.running;
 export const runLocalApps = (state:State)=> state.ide.runLocally;
 export const consoles = (state:State, appName: string)=> state.ide.consoles.find(c=>c.appName==appName)?.buffer
+export const branches = (state:State, appName: string)=> state.ide.branches[appName]
+export const selectedBranch = (state:State, appName: string)=> state.ide.selectedBranch[appName]
 
 
 export const selectedProject = (state:State)=> {

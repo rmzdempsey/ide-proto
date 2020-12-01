@@ -2,6 +2,7 @@ import * as IdeActions from '../actions/ide-actions';
 import { Template } from '../../model/template';
 import { Project2 } from '../../model/project';
 import { ConsoleBuffer } from 'src/app/model/console-buffer';
+import { BranchDetails } from 'src/app/model/branch-details';
 
 export interface State {
   templates : Array<Template>;
@@ -11,6 +12,8 @@ export interface State {
   runLocally : Array<string>;
   waitForDebug: Array<string>;
   consoles: Array<ConsoleBuffer>;
+  branches: any;
+  selectedBranch: any;
 }
 
 export const initialState: State = {
@@ -21,6 +24,8 @@ export const initialState: State = {
     runLocally : [],
     waitForDebug : [],
     consoles: [],
+    branches: {},
+    selectedBranch: {},
 };
 
 export function reducer(state: State = initialState, action: IdeActions.Actions ) {
@@ -42,6 +47,8 @@ export function reducer(state: State = initialState, action: IdeActions.Actions 
                     runLocally: [],
                     waitForDebug: [],
                     consoles: [],
+                    branches:{},
+                    selectedBranch:{},
                 });
             }
         case IdeActions.IDE_NEW_PROJECT_SUCCESS_ACTION:
@@ -58,7 +65,7 @@ export function reducer(state: State = initialState, action: IdeActions.Actions 
         case IdeActions.IDE_DELETE_PROJECT_SUCCESS_ACTION:
             return Object.assign({},state,{
                 projects:state.projects.filter(p=>p.name!=action.projectName), 
-                selectedProject:null, consoles:[]
+                selectedProject:null, consoles:[], branches: {},selectedBranch:{},
             });
         case IdeActions.UPDATE_CONSOLE:{
             let consoles : Array<ConsoleBuffer> = state.consoles.filter(c=>c.appName!=action.name);
@@ -88,6 +95,16 @@ export function reducer(state: State = initialState, action: IdeActions.Actions 
             return Object.assign({},state,{running:true})
         case IdeActions.IDE_STOP_ACTION:
             return Object.assign({},state,{running:false})
+        case IdeActions.IDE_GET_BRANCHES_SUCCESS_ACTION:{
+            let branches = Object.assign({},state.branches);
+            branches[action.appName] = action.branches;
+            return Object.assign({},state,{branches:branches});
+        }
+        case IdeActions.IDE_BRANCH_SELECTED_ACTION:{
+            let selectedBranches = Object.assign({},state.selectedBranch);
+            selectedBranches[action.appName] = action.branch;
+            return Object.assign({},state,{selectedBranch:selectedBranches})
+        }
         default: {
             return state;
         }

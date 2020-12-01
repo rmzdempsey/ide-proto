@@ -4,7 +4,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { Template } from 'src/app/model/template';
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../../../store/reducers';
-import { BranchChangedAction } from '../../../store/actions/project-actions'
+import { IdeBranchChangedAction } from '../../../store/actions/ide-actions'
 import { IdeRunLocalAction } from 'src/app/store/actions/ide-actions';
 import { Subscription } from 'rxjs';
 
@@ -22,6 +22,10 @@ export class AppPanelComponent implements OnInit, OnDestroy {
 
   runningLocalAppsSubscription : Subscription;
   runningSubscription : Subscription;
+  branchesSubscription: Subscription;
+  selectedBranchSubscription: Subscription;
+  branches: Array<string>;
+  selectedBranch: string;
 
   constructor(
     private store: Store<fromRoot.State>,
@@ -29,12 +33,21 @@ export class AppPanelComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+    this.branches = [];
+
     this.runningLocalAppsSubscription = this.store.select(fromRoot.runLocalApps).subscribe(value=>{
       this.runLocal = value.indexOf(this.template.appName) != -1;
     })
-
     this.runningSubscription = this.store.select(fromRoot.running).subscribe(value=>{
       this.running = value
+    })
+    this.branchesSubscription = this.store.select(fromRoot.branches,this.template.appName).subscribe(value=>{
+      if(value){
+        this.branches = value;
+      }
+    })
+    this.selectedBranchSubscription = this.store.select(fromRoot.selectedBranch,this.template.appName).subscribe(value=>{
+      this.selectedBranch = value;
     })
 
     this.fg = new FormGroup({})
@@ -50,6 +63,8 @@ export class AppPanelComponent implements OnInit, OnDestroy {
   ngOnDestroy(){
     this.runningLocalAppsSubscription?.unsubscribe();
     this.runningSubscription?.unsubscribe();
+    this.branchesSubscription?.unsubscribe();
+    this.selectedBranchSubscription?.unsubscribe();
   }
 
   onRunLocalChange(evt){
@@ -61,6 +76,6 @@ export class AppPanelComponent implements OnInit, OnDestroy {
   }
 
   branchChange(evt: MatSelectChange){
-    //this.store.dispatch( new BranchChangedAction( this.project, this.app.template.appName, evt.value) )
+    this.store.dispatch( new IdeBranchChangedAction( this.template.appName, evt.value) )
   }
 }

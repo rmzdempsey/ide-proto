@@ -1,6 +1,6 @@
 import { Injectable,NgZone } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import {Project} from '../model/project';
+import {Project, Project2} from '../model/project';
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../store/reducers';
 import * as ProjectActions from '../store/actions/project-actions';
@@ -57,6 +57,18 @@ export class ConfigService {
       })
     });
 
+    electron.ipcRenderer.on('appCloned', (event, projectName, appName )=>{
+      this.zone.run(()=>{
+        this.store.dispatch(new IdeActions.IdeAppClonedAction(projectName,appName));
+      })
+    });
+
+    electron.ipcRenderer.on('getBranchDetailsForAppSuccess', (event, projectName, appName, branches )=>{
+      this.zone.run(()=>{
+        this.store.dispatch(new IdeActions.IdeGetBranchesSuccessAction( projectName, appName, branches ));
+      })
+    });
+
     electron.ipcRenderer.on('branchChangedSuccess',(event, projectName, appName, branchName )=>{
       this.zone.run(()=>{
         this.store.dispatch(new ProjectActions.BranchChangeSuccessAction(projectName, appName, branchName ));
@@ -85,8 +97,17 @@ export class ConfigService {
     electron.ipcRenderer.send('cloneApps', project );
   }
 
+  cloneAppsForProject(project:Project2){
+    electron.ipcRenderer.send('cloneAppsForProject', project );
+  }
+
   changeBranch(project:Project, appName: string, branchName: string ){
     electron.ipcRenderer.send('changeBranch', project.name, appName, branchName );
+  }
+
+  getBranchDetailsForApp(projectName:string,appName:string ){
+    console.log('config servuce get branch info', projectName )
+    electron.ipcRenderer.send('getBranchDetailsForApp', projectName, appName );
   }
 
   initialiseIde(){

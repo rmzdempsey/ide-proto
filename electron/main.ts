@@ -108,18 +108,25 @@ ipcMain.on("cloneApps", (event, project) => {
   project.apps.forEach(app=>cloneApp(projectDir, project, app))
 });
 
-function cloneApp(projDir, project, app){
-  if (!fs.existsSync(projDir + "/" + app.template.appName)){
-    const ls = spawn("git", ["clone", "--progress", "--verbose", app.template.repo, projDir + "/" + app.template.appName]);
+ipcMain.on("cloneAppsForProject",(event, project)=>{
+  const homedir = require('os').homedir();
+  const projectDir = homedir + '/dtp-ide/' + project['name']
+  project['templateNames'].forEach(app=>cloneApp(projectDir, project['name'], app))
+})
+
+function cloneApp(projDir, projectName, appName){
+  if (!fs.existsSync(projDir + "/" + appName)){
+    let template = JSON.parse(fs.readFileSync('./templates/'+appName +'.json',"utf8"))
+    const ls = spawn("git", ["clone", "--progress", "--verbose", template.repo, projDir + "/" + appName]);
 
     ls.stdout.on("data", data => {
       const line : string = String.fromCharCode.apply(null, data)
-      win.webContents.send("updateConsoleStdOut", app.template.appName, line );
+      win.webContents.send("updateConsoleStdOut", appName, line );
     });
 
     ls.stderr.on("data", data => {
       const line : string = String.fromCharCode.apply(null, data)
-      win.webContents.send("updateConsoleStdErr", app.template.appName, line );
+      win.webContents.send("updateConsoleStdErr", appName, line );
     });
 
     ls.on('error', (error) => {
@@ -128,13 +135,14 @@ function cloneApp(projDir, project, app){
 
     ls.on("close", code => {
       if( code == 0 ){
-        getBranches(projDir, project, app);
+        win.webContents.send("appCloned", projectName, appName );
+        //getBranches(projDir, project, app);
       }
     });
   }
-  else{
-    getBranches(projDir, project, app);
-  }
+  // else{
+  //   getBranches(projDir, project, app);
+  // }
 }
 
 function getBranches(projDir, project, app){
@@ -252,4 +260,33 @@ ipcMain.on("initialiseIde", (event) => {
     }
   });
 })
+
+ipcMain.on("getBranchDetailsForApp", (event, projectName, appName) => {
+
+  const homedir = require('os').homedir();
+  const branches : Array<string> = [];
+  const ls = spawn("git", ["branch", "-r"], {cwd: homedir + '/dtp-ide' + "/" + projectName + "/" + appName });
+
+  ls.stdout.on("data", data => {
+    const txt = String.fromCharCode.apply(null, data)
+    var os = require('os');
+
+    const lines = txt.split(os.EOL);
+    lines.map(l=>l.trim()).filter(l=>l.length > 0 ).filter(l=>!l.startsWith('origin/HEAD')).map(l=>l.substring(7)).forEach(l=>branches.push(l))
+  });
+
+  ls.stderr.on("data", data => {
+    console.log(`GB stderr: ${data}`);
+  });
+
+  ls.on('error', (error) => {
+      console.log(`GB error: ${error.message}`);
+  });
+
+  ls.on("close", code => {
+      if( code == 0 ){
+        win.webContents.send("getBranchDetailsForAppSuccess", projectName, appName, branches );
+      }
+  });
+});
 

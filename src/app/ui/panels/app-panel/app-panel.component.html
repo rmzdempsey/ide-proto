@@ -21,11 +21,11 @@
 
                             <div *ngIf="runLocal">
                                 <mat-label>Branch</mat-label>
-                                <!-- <mat-select [value]="app.currentBranch" (selectionChange)="branchChange($event)" [disabled]="running">
-                                    <mat-option *ngFor="let b of app.branches" [value]="b">
+                                <mat-select [value]="selectedBranch" (selectionChange)="branchChange($event)" [disabled]="running">
+                                    <mat-option *ngFor="let b of branches" [value]="b">
                                         {{b}}
                                   </mat-option>
-                                </mat-select>      -->
+                                </mat-select>     
                             </div>
                             
                             <div fxLayout="column">
