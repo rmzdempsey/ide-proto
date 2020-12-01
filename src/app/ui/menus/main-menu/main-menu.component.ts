@@ -5,11 +5,8 @@ import { Subscription } from 'rxjs';
 import { MatDialog} from '@angular/material/dialog';
 import { NewProjectComponent } from '../../dialogs/new-project/new-project.component';
 import { OpenProjectComponent } from '../../dialogs/open-project/open-project.component';
-import { SelectProjectAction, DeleteProjectAction } from '../../../store/actions/project-actions';
-import { Project } from 'src/app/model/project';
-import { Actions, ofType } from '@ngrx/effects';
-import { DELETE_PROJECT_FAILURE_ACTION, DELETE_PROJECT_SUCCESS_ACTION} from '../../../store/actions/project-actions'
-import { DestroyConsoleAction } from 'src/app/store/actions/console-action';
+import { Actions } from '@ngrx/effects';
+import { IdeDeleteProjectAction, IdeSelectProjectAction } from 'src/app/store/actions/ide-actions';
 
 @Component({
   selector: 'app-main-menu',
@@ -23,10 +20,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   disableClose: boolean;
   disableOpen: boolean;
   disableDelete: boolean;
-  selectedProject: Project;
-
-  onSuccessSubscription: Subscription;
-  onErrorSubscription: Subscription;
+  selectedProject: any;
 
   constructor(
     private store: Store<fromRoot.State>,
@@ -36,18 +30,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-
-    this.onSuccessSubscription = this.actions$.pipe(
-      ofType(DELETE_PROJECT_SUCCESS_ACTION),
-    ).subscribe(project=>{
-      this.cdr.detectChanges()
-    });
-
-    this.onErrorSubscription = this.actions$.pipe(
-      ofType(DELETE_PROJECT_FAILURE_ACTION),
-    ).subscribe(message=>{
-      this.cdr.detectChanges()
-    });
 
     this.disableClose = true;
     this.selectedProjectSubscription = this.store.select(fromRoot.selectedProject).subscribe(
@@ -87,17 +69,11 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   }
 
   closeProject(){
-    this.selectedProject.apps.forEach(a=>{
-      this.store.dispatch(new DestroyConsoleAction(a.template.appName))
-    })
-    this.store.dispatch(new SelectProjectAction(null))
+    this.store.dispatch(new IdeSelectProjectAction(null))
   }
 
   deleteProject(){
-    this.selectedProject.apps.forEach(a=>{
-      this.store.dispatch(new DestroyConsoleAction(a.template.appName))
-    })
-    this.store.dispatch(new DeleteProjectAction(this.selectedProject.name))
+    this.store.dispatch(new IdeDeleteProjectAction(this.selectedProject.name))
   }
 
 }

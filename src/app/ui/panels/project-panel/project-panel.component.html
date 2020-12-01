@@ -1,15 +1,29 @@
 
 <div fxLayout="column" *ngIf="isLoggedIn" >
 
-    <div fxLayout="row" fxLayoutAlign="start center" class="project-header">
+    <div fxLayout="row" fxLayoutAlign="space-between center" class="project-header">
         <app-main-menu></app-main-menu>
-        <div ><span *ngIf="selectedProject">Project : {{selectedProject.name}}</span></div>
+        
+        <div *ngIf="selectedProject">Project : {{selectedProject.name}}</div>
+        
+        <div *ngIf="selectedProject" fxLayout="row">
+            <button mat-icon-button [disabled]="isRunning || runLocalCount == 0" (click)="playClicked()">
+                <mat-icon>play_arrow</mat-icon>
+            </button>
+            <button mat-icon-button [disabled]="!isRunning" (click)="stopClicked()">
+                <mat-icon>stop</mat-icon>
+            </button>
+        </div>
+        
     </div>
 
     <ng-container *ngIf="selectedProject">
         <div fxLayout="column" fxLayoutGap="10px" class="main-content" cdkDropList (cdkDropListDropped)="drop($event)">
 
-            <app-app-panel [app]="app" [project]="selectedProject" *ngFor="let app of cards;"></app-app-panel>
+            <app-app-panel 
+                [template]="app" 
+                *ngFor="let app of cards;"></app-app-panel>
+           
         
         </div>
     </ng-container>

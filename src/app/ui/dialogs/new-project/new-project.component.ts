@@ -1,13 +1,11 @@
-import { Component, OnDestroy, OnInit,ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../../../store/reducers';
 import {MatDialogRef} from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import { Template } from 'src/app/model/template';
-import {NewProjectAction,NEW_PROJECT_ACTION_SUCCESS,NEW_PROJECT_ACTION_FAILED} from '../../../store/actions/project-actions'
-import { Actions, ofType } from '@ngrx/effects';
-import { Application } from 'src/app/model/application';
+import { IdeNewProjectAction } from 'src/app/store/actions/ide-actions';
 
 @Component({
   selector: 'app-new-project',
@@ -18,11 +16,8 @@ export class NewProjectComponent implements OnInit, OnDestroy {
 
   fg: FormGroup;
   templatesSubscription : Subscription;
-  errorMessageSubscription : Subscription;
   projectNamesSubscription : Subscription;
-  onSuccessSubscription: Subscription;
-  onErrorSubscription: Subscription;
-
+  
   templates: Array<Template>;
   projectNames: Array<string>;
   errorMessage: string = " ";
@@ -30,27 +25,11 @@ export class NewProjectComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<NewProjectComponent>,
     private store: Store<fromRoot.State>,
-    private actions$: Actions,
-    private cdr : ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     this.templates = [];
     this.projectNames = [];
-
-    this.onSuccessSubscription = this.actions$.pipe(
-      ofType(NEW_PROJECT_ACTION_SUCCESS),
-    ).subscribe(project=>{
-      if(project) this.dialogRef.close();
-      this.cdr.detectChanges()
-    });
-
-    this.onErrorSubscription = this.actions$.pipe(
-      ofType(NEW_PROJECT_ACTION_FAILED),
-    ).subscribe(message=>{
-      this.errorMessage = message ? message : " ";
-      this.cdr.detectChanges()
-    });
 
     this.fg = new FormGroup({
       projectName: new FormControl('',[Validators.required]),
@@ -60,10 +39,6 @@ export class NewProjectComponent implements OnInit, OnDestroy {
     this.templatesSubscription = this.store.select(fromRoot.templates).subscribe(value=>{
       this.templates = value
     })
-
-    this.errorMessageSubscription = this.store.select(fromRoot.errorMessage).subscribe(value=>{
-      this.errorMessage = value ? value : this.clearErrorMessage();
-    });
 
     this.projectNamesSubscription = this.store.select(fromRoot.projectNames).subscribe(value=>{
       this.projectNames = value;
@@ -93,9 +68,6 @@ export class NewProjectComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.templatesSubscription?.unsubscribe()
     this.projectNamesSubscription?.unsubscribe()
-    this.errorMessageSubscription?.unsubscribe()
-    this.onSuccessSubscription?.unsubscribe();
-    this.onErrorSubscription?.unsubscribe();
   }
 
   disableOk():boolean{
@@ -113,11 +85,12 @@ export class NewProjectComponent implements OnInit, OnDestroy {
   okClicked(){
     this.clearErrorMessage();
     if(this.fg.valid){
-      let action : NewProjectAction = new NewProjectAction(
+      let action : IdeNewProjectAction = new IdeNewProjectAction(
         this.fg.get('projectName').value, 
         this.fg.get('selectedTemplates').value
       );
       this.store.dispatch( action )
+      this.dialogRef.close()
     }
   }
 

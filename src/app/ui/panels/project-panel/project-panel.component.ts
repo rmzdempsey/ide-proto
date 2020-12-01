@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import * as fromRoot from '../../../store/reducers';
 import { Subscription } from 'rxjs';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import { IdeStartAction, IdeStopAction } from 'src/app/store/actions/ide-actions';
 
 @Component({
   selector: 'app-project-panel',
@@ -15,6 +16,10 @@ export class ProjectPanelComponent implements OnInit, OnDestroy {
   selectedProject: any;
   loginSubscription : Subscription;
   selectedProjectSubscription : Subscription;
+  isRunningSubscription : Subscription;
+  runningLocalAppsSubscription : Subscription;
+  isRunning: boolean;
+  runLocalCount: number;
 
   cards: Array<any>;
 
@@ -23,6 +28,8 @@ export class ProjectPanelComponent implements OnInit, OnDestroy {
     ) { }
 
   ngOnInit(): void {
+
+    this.runLocalCount = 0;
 
     this.loginSubscription = this.store.select(fromRoot.loggedIn).subscribe(value=>{
       if(value){
@@ -37,22 +44,37 @@ export class ProjectPanelComponent implements OnInit, OnDestroy {
         this.selectedProject = value;
         if(this.selectedProject){
           this.cards = [];
-          this.selectedProject.apps.forEach(app => {
-            this.cards.push(app);
+          this.selectedProject.templates.forEach(t => {
+            this.cards.push(t);
           });
         }
       }
       ); 
-
+    this.isRunningSubscription = this.store.select(fromRoot.running).subscribe(value=>{
+      this.isRunning = value;
+    })
+    this.runningLocalAppsSubscription = this.store.select(fromRoot.runLocalApps).subscribe(value=>{
+      this.runLocalCount = value.length;
+    })
   }
 
   ngOnDestroy(): void{
     this.loginSubscription?.unsubscribe();
     this.selectedProjectSubscription?.unsubscribe();
+    this.isRunningSubscription?.unsubscribe();
+    this.runningLocalAppsSubscription?.unsubscribe();
   }
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.cards, event.previousIndex, event.currentIndex);
+  }
+
+  playClicked(){
+    this.store.dispatch(new IdeStartAction())
+  }
+
+  stopClicked(){
+    this.store.dispatch(new IdeStopAction())
   }
 
 }
